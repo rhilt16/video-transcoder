@@ -3,7 +3,8 @@ import './App.css';
 // Import axios to post Request
 import axios from 'axios'
 // Create State for variables
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
+
 
 function Upload() {
     console.log("die");
@@ -11,7 +12,7 @@ function Upload() {
     const [filename, setFilename] = useState("Choose File");
     const [uploadedFile, setUploadedFile] = useState({});
     const [message, setMessage] = useState("");
-    var ffmpeg = require('fluent-ffmpeg');
+        
 
  // Create OnSubmit function
  const onSubmit = async (e) => {

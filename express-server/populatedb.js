@@ -20,9 +20,9 @@ async function main() {
   console.log("Debug: About to connect");
   await mongoose.connect(mongoDB);
   console.log("Debug: Should be connected?");
-  await createTranscodeLogs();
+  await createTranscodes();
   await createUsers();
-  await createUploadLogs();
+  await createUploads();
   await createMetadata();
   console.log("Debug: Closing mongoose");
   mongoose.connection.close();
@@ -57,6 +57,32 @@ async function metadataCreate(index, video_id, path, size, format) {
   console.log(`Added metadata: ${video_id}`);
 }
 
+async function createUsers() {
+  console.log("Adding users");
+  await Promise.all([
+    userCreate(0, "Admin", "Smith", "admin@admin.com", "secret"),
+  ]);
+}
 
+async function createTranscodes() {
+  console.log("Adding transcodes");
+  await Promise.all([
+    transcodeCreate(0, "coolID", "25/08/2024 16:15:29", 0, 1),
+  ]);
+}
+
+async function createUploads() {
+  console.log("Adding uploads");
+  await Promise.all([
+    uploadCreate(0, 0, "coolID", "25/08/2024 16:14:30", 1),
+  ]);
+}
+
+async function createMetadata() {
+  console.log("Adding metadata");
+  await Promise.all([
+    metadataCreate(0, "coolID", "path/to/file", "16kb", ".mp4"),
+  ]);
+}
 
 

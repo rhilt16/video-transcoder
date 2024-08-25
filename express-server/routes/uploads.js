@@ -16,7 +16,7 @@ router.post("/upload", (req, res) => {
   const UFileName = `${new Date().getTime()}-${file.name.replaceAll(" ", "-")}`;
   // This line of code will save our file in public/uploads folder in our
   //appliction and will retrun err if any error found if no error found then return pathname of file.
-  file.mv(`${__dirname}/client/public/uploads/${UFileName}`, (err) => {
+  file.mv(`${__dirname}/../../uploads/${UFileName}`, (err) => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);

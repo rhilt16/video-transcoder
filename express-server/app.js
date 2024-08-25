@@ -5,6 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 const fileUpload = require("express-fileupload");
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const mongoDB = "mongodb+srv://user:Deadpool4@cab432.fn5bw.mongodb.net/?retryWrites=true&w=majority&appName=cab432";
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
 
 var indexRouter = require('./routes/index.js');
 var usersRouter = require('./routes/users.js');

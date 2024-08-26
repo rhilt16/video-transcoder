@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const asyncHandler = require("express-async-handler");
-const upload_controller = require("../controllers/uploadController")
+const upload_controller = require("../controllers/uploadController");
+const metadata_controller = require("../controllers/metadataController");
+const transcode_controller = require("../controllers/transcodeController")
 
 
 router.post("/upload", (req, res) => {
@@ -32,5 +34,29 @@ router.post("/:id/delete", upload_controller.upload_delete_post);
 router.post("/:id/update", upload_controller.upload_update_post);
 
 router.get("/:id", upload_controller.upload_select);
+
+// Video Metadata
+
+router.get("/metadata", metadata_controller.metadata_list);
+
+router.post("/metadata/create", metadata_controller.metadata_create_post);
+
+router.post("/metadata/:id/delete", metadata_controller.metadata_delete_post);
+
+router.post("/metadata/:id/update", metadata_controller.metadata_update_post);
+
+router.get("/metadata/:id", metadata_controller.metadata_select);
+
+// Transcodes
+
+//router.get("/transcodes", transcode_controller.transcode_list);
+
+//router.post("/transcodes/create", transcode_controller.transcode_create_post);
+
+//router.post("/transcodes/:id/delete", transcode_controller.transcode_delete_post);
+
+//router.post("/transcodes/:id/update", transcode_controller.transcode_update_post);
+
+//router.get("/transcodes/:id", transcodes_controller.transcodes_select);
 
 module.exports = router;

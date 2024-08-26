@@ -1,10 +1,8 @@
 var express = require('express');
 var router = express.Router();
+const asyncHandler = require("express-async-handler");
+const upload_controller = require("../controllers/uploadController")
 
-/* POST uploaded file. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
 
 router.post("/upload", (req, res) => {
   // Check if file is not available return message with status 400.
@@ -24,5 +22,15 @@ router.post("/upload", (req, res) => {
     res.json({ fileName: UFileName, filePath: `/uploads/${UFileName}` });
   });
 });
+
+router.get("/", upload_controller.upload_list);
+
+router.post("/create", upload_controller.upload_create_post);
+
+router.post("/:id/delete", upload_controller.upload_delete_post);
+
+router.post("/:id/update", upload_controller.upload_update_post);
+
+router.get("/:id", upload_controller.upload_select);
 
 module.exports = router;

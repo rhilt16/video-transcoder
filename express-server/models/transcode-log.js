@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const TranscodeSchema = new Schema({
   video_id: { type: String, required: true },
   time_uploaded: { type: String, required: true },
-  user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  user_id: { type: String, required: true },
   successful: { type: Boolean, required: false },
 });
 
@@ -16,4 +16,4 @@ TranscodeSchema.virtual("url").get(function () {
 });
 
 // Export model
-module.exports = mongoose.model("Transcode", TrancodeSchema);
+module.exports = mongoose.model("Transcode", TranscodeSchema);

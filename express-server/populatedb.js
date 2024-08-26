@@ -3,6 +3,9 @@
 const userArgs = process.argv.slice(2);
 
 const User = require("./models/users");
+const Transcode = require("./models/transcode-log");
+const UploadLog = require("./models/uploadLogs");
+const Metadata = require("./models/metadata");
 
 const users = [];
 const uploadLogs = [];
@@ -36,7 +39,7 @@ async function userCreate(index, firstName, familyName, email, password) {
 }
 
 async function transcodeCreate(index, video_id, time_uploaded, user_id, successful) {
-  const transcodeLog = new TranscodeLog{ video_id: video_id, time_uploaded: time_uploaded, user_id: user_id, successful: successful };
+  const transcodeLog = new Transcode({ video_id: video_id, time_uploaded: time_uploaded, user_id: user_id, successful: successful });
 
   await transcodeLog.save();
   transcodeLogs[index] = transcodeLog;

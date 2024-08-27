@@ -38,8 +38,8 @@ async function userCreate(index, firstName, familyName, email, password) {
   console.log(`Added user: ${familyName}`);
 }
 
-async function transcodeCreate(index, video_id, time_uploaded, user_id, successful) {
-  const transcodeLog = new Transcode({ video_id: video_id, time_uploaded: time_uploaded, user_id: user_id, successful: successful });
+async function transcodeCreate(index, video_id, time_uploaded, user_id, path, successful) {
+  const transcodeLog = new Transcode({ video_id: video_id, time_uploaded: time_uploaded, user_id: user_id, path: path, successful: successful });
 
   await transcodeLog.save();
   transcodeLogs[index] = transcodeLog;
@@ -70,7 +70,7 @@ async function createUsers() {
 async function createTranscodes() {
   console.log("Adding transcodes");
   await Promise.all([
-    transcodeCreate(0, "coolID", "25/08/2024 16:15:29", 0, 1),
+    transcodeCreate(0, "coolID", "25/08/2024 16:15:29", 0, "path/to/file", 1),
   ]);
 }
 

@@ -3,7 +3,7 @@ var router = express.Router();
 const asyncHandler = require("express-async-handler");
 const upload_controller = require("../controllers/uploadController");
 const metadata_controller = require("../controllers/metadataController");
-const transcode_controller = require("../controllers/transcodeController")
+const transcodes_controller = require("../controllers/transcodeController")
 
 
 router.post("/uploads/upload", (req, res) => {
@@ -49,14 +49,14 @@ router.get("/metadata/:id", metadata_controller.metadata_select);
 
 // Transcodes
 
-router.get("/transcodes", transcode_controller.transcode_list);
+router.get("/transcodes", transcodes_controller.transcode_list);
 
-router.post("/transcodes/create", transcode_controller.transcode_create_post);
+router.post("/transcodes/create", transcodes_controller.transcode_create_post);
 
-router.post("/transcodes/:id/delete", transcode_controller.transcode_delete_post);
+router.post("/transcodes/:id/delete", transcodes_controller.transcode_delete_post);
 
-router.post("/transcodes/:id/update", transcode_controller.transcode_update_post);
+router.post("/transcodes/:id/update", transcodes_controller.transcode_update_post);
 
-router.get("/transcodes/:id", transcodes_controller.transcodes_select);
+router.get("/transcodes/:id", transcodes_controller.transcode_select);
 
 module.exports = router;

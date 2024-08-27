@@ -6,6 +6,7 @@ const TranscodeSchema = new Schema({
   video_id: { type: String, required: true },
   time_uploaded: { type: String, required: true },
   user_id: { type: String, required: true },
+  path: {type: String, required: true },
   successful: { type: Boolean, required: false },
 });
 

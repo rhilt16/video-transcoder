@@ -86,17 +86,17 @@ exports.transcode_update_post = [
     .isLength({ min: 13 })
     .escape()
     .withMessage("ID must be correct length"),
-  body("path")
+  body("time_uploaded")
     .trim()
     .isLength({ min: 1 })
     .escape()
-    .withMessage("Path required"),
-  body("size")
-    .isLength({min: 1})
+    .withMessage("Upload time required"),
+  body("user_id")
+    .isLength({min: 24})
     .escape()
-    .withMessage("size required"),
-  body("format")
-    .isLength({max: 1})
+    .withMessage("ID must be correct length required"),
+  body("successful")
+    .isBoolean()
     .escape()
     .withMessage("Must be boolean"),
 

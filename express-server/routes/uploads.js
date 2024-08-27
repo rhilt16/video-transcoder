@@ -49,14 +49,14 @@ router.get("/metadata/:id", metadata_controller.metadata_select);
 
 // Transcodes
 
-//router.get("/transcodes", transcode_controller.transcode_list);
+router.get("/transcodes", transcode_controller.transcode_list);
 
-//router.post("/transcodes/create", transcode_controller.transcode_create_post);
+router.post("/transcodes/create", transcode_controller.transcode_create_post);
 
-//router.post("/transcodes/:id/delete", transcode_controller.transcode_delete_post);
+router.post("/transcodes/:id/delete", transcode_controller.transcode_delete_post);
 
-//router.post("/transcodes/:id/update", transcode_controller.transcode_update_post);
+router.post("/transcodes/:id/update", transcode_controller.transcode_update_post);
 
-//router.get("/transcodes/:id", transcodes_controller.transcodes_select);
+router.get("/transcodes/:id", transcodes_controller.transcodes_select);
 
 module.exports = router;

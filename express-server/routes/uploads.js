@@ -6,7 +6,7 @@ const metadata_controller = require("../controllers/metadataController");
 const transcode_controller = require("../controllers/transcodeController")
 
 
-router.post("/upload", (req, res) => {
+router.post("/uploads/upload", (req, res) => {
   // Check if file is not available return message with status 400.
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
@@ -25,15 +25,15 @@ router.post("/upload", (req, res) => {
   });
 });
 
-router.get("/", upload_controller.upload_list);
+router.get("/uploads", upload_controller.upload_list);
 
-router.post("/create", upload_controller.upload_create_post);
+router.post("/uploads/create", upload_controller.upload_create_post);
 
-router.post("/:id/delete", upload_controller.upload_delete_post);
+router.post("/uploads/:id/delete", upload_controller.upload_delete_post);
 
-router.post("/:id/update", upload_controller.upload_update_post);
+router.post("/uploads/:id/update", upload_controller.upload_update_post);
 
-router.get("/:id", upload_controller.upload_select);
+router.get("/uploads/:id", upload_controller.upload_select);
 
 // Video Metadata
 

@@ -15,7 +15,8 @@ async function main() {
 
 var indexRouter = require('./routes/index.js');
 var usersRouter = require('./routes/users.js');
-var uploadRouter = require('./routes/uploads.js')
+var videoRouter = require('./routes/uploads.js');
+
 
 var app = express();
 
@@ -32,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/uploads', uploadRouter);
+app.use('/uploads', videoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

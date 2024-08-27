@@ -4,7 +4,31 @@ const asyncHandler = require("express-async-handler");
 const upload_controller = require("../controllers/uploadController");
 const metadata_controller = require("../controllers/metadataController");
 const transcodes_controller = require("../controllers/transcodeController")
+const ffmpeg = require('fluent-ffmpeg');
 
+const inputpath = "../uploads/1724748133958-video.mp4";
+const outputpath = "output.mov";
+
+//Use ffmpeg to get video duration
+
+ffmpeg.ffprobe(inputpath,(error,metadata) => {
+  console.log(metadata)
+  const totalDuration = metadata.format.duration;
+
+});
+
+ffmpeg(inputpath)
+  .output(outputpath)
+  .videoCodec('libx264')
+  .audioCodec('libmp3lame')
+  .on('progress', (progress) => {
+    console.log(progress)
+  })
+  .on('end',() => {
+  console.log("done")
+  })
+  .on('error',(error) => console.log(error))
+  .save('../uploads/output.avi')
 
 router.post("/uploads/upload", (req, res) => {
   // Check if file is not available return message with status 400.

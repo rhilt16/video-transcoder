@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 // Import axios to post Request
 import axios from 'axios'
@@ -12,7 +11,7 @@ function Upload() {
     const [filename, setFilename] = useState("Choose File");
     const [uploadedFile, setUploadedFile] = useState({});
     const [message, setMessage] = useState("");
-        
+    const [uploadData, setUploadData] = useState("uploadData");
 
  // Create OnSubmit function
  const onSubmit = async (e) => {
@@ -20,7 +19,7 @@ function Upload() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await axios.post("/upload", formData, {
+      const res = await axios.post("http://localhost:8080/videos/uploads/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -37,14 +36,35 @@ function Upload() {
 
     }
   };
+
+ const getUploads = async (e) => {
+    try {
+     const res = await axios.get("http://localhost:8080/videos/uploads", {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setUploadData(res.data);
+      setMessage("Upload Data");
+    } catch (err) {
+      if (err.response.status === 500) {
+        setMessage("There was a problem with the server");
+      } else {
+        setMessage(err.response.data.msg);
+      }
+
+    }
+  };
+getUploads();
   // Create OnChange Event for Input Box
  const onChange = (e) => {
     setFile(e.target.files[0]);
     setFilename(e.target.files[0].name);
-  };
+    console.log(filename);  
+};
 
   return (
-    <div className="App">
+<div className="App">
     <div className='upload-container'>
         <h1>Video transcode</h1>
         <h2>Upload a video file</h2>
@@ -81,7 +101,13 @@ Uploaded File:
         </div>
       ) : null}
     </div>
+    <div className = "uploads-container">
+    <table>
+    <tr><td>{uploadData}</td></tr>
+    </table>
     </div>
+    </div>
+
   );
 }
 

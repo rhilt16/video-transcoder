@@ -1,114 +1,121 @@
 import './App.css';
-// Import axios to post Request
-import axios from 'axios'
-// Create State for variables
-import { useState} from 'react';
-
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 function Upload() {
-    console.log("die");
     const [file, setFile] = useState("");
     const [filename, setFilename] = useState("Choose File");
     const [uploadedFile, setUploadedFile] = useState({});
     const [message, setMessage] = useState("");
-    const [uploadData, setUploadData] = useState("uploadData");
+    const [uploadData, setUploadData] = useState([]);
 
- // Create OnSubmit function
- const onSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await axios.post("http://localhost:8080/videos/uploads/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const { fileName, filePath } = res.data;
-      setUploadedFile({ fileName, filePath });
-      setMessage("File Uploaded");
-    } catch (err) {
-      if (err.response.status === 500) {
-        setMessage("There was a problem with the server");
-      } else {
-        setMessage(err.response.data.msg);
-      }
+    // Create OnSubmit function
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+            const res = await axios.post("http://localhost:8080/videos/uploads/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            const { fileName, filePath } = res.data;
+            setUploadedFile({ fileName, filePath });
+            setMessage("File Uploaded");
+        } catch (err) {
+            if (err.response && err.response.status === 500) {
+                setMessage("There was a problem with the server");
+            } else {
+                setMessage(err.response?.data?.msg || "Error uploading file");
+            }
+        }
+    };
 
-    }
-  };
+    // Fetch uploaded files
+    useEffect(() => {
+        const getUploads = async () => {
+            try {
+                const res = await axios.get("http://localhost:8080/videos/uploads");
+                setUploadData(res.data);
+                setMessage("Upload Data Retrieved");
+            } catch (err) {
+                if (err.response && err.response.status === 500) {
+                    setMessage("There was a problem with the server");
+                } else {
+                    setMessage(err.response?.data?.msg || "Error fetching upload data");
+                }
+            }
+        };
+        getUploads();
+    }, []);
 
- const getUploads = async (e) => {
-    try {
-     const res = await axios.get("http://localhost:8080/videos/uploads", {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setUploadData(res.data);
-      setMessage("Upload Data");
-    } catch (err) {
-      if (err.response.status === 500) {
-        setMessage("There was a problem with the server");
-      } else {
-        setMessage(err.response.data.msg);
-      }
+    // Handle file input change
+    const onChange = (e) => {
+        setFile(e.target.files[0]);
+        setFilename(e.target.files[0].name);
+    };
 
-    }
-  };
-getUploads();
-  // Create OnChange Event for Input Box
- const onChange = (e) => {
-    setFile(e.target.files[0]);
-    setFilename(e.target.files[0].name);
-    console.log(filename);  
-};
+    return (
+        <div className="App">
+            <div className='upload-container'>
+                <h1>Video transcode</h1>
+                <h2>Upload a video file</h2>
+                <h5>Supported formats: ?</h5>
+                <form onSubmit={onSubmit}>
+                    <div className="custom-file mb-4">
+                        <input
+                            type="file"
+                            className="custom-file-input"
+                            id="customFile"
+                            accept="video/*"
+                            onChange={onChange}
+                            required
+                        />
+                        <label className="custom-file-label" htmlFor="customFile">
+                            {filename}
+                        </label>
+                    </div>
 
-  return (
-<div className="App">
-    <div className='upload-container'>
-        <h1>Video transcode</h1>
-        <h2>Upload a video file</h2>
-        <h5>Supported formats: ?</h5>
-    <form onSubmit={onSubmit}>
-        <div className="custom-file mb-4">
-            <input
-                type="file"
-                className="custom-file-input"
-                id="customFile"
-                accept="video/*"
-                onChange={onChange}
-                required
-            />
+                    <input
+                        type="submit"
+                        value="Upload"
+                        className="btn btn-primary btn-block mt-4"
+                    />
+                </form>
+
+                {message && <p>{message}</p>}
+                {uploadedFile.fileName && (
+                    <div className="row mt-5">
+                        <div className="col-md-6 m-auto">
+                            <h3 className="text-center">{uploadedFile.fileName}</h3>
+                            <video style={{ width: "100%" }} controls>
+                                <source src={uploadedFile.filePath} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="uploads-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Uploaded Files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {uploadData.map((data, index) => (
+                            <tr key={index}>
+                                <td>{data.fileName}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-        <input
-            type="submit"
-            value="Upload"
-            className="btn btn-primary btn-block mt-4"
-        />
-    </form>
-
-  {message? <p> msg={message} </p> : null}
-Uploaded File:
-  {uploadedFile.fileName? <p> msg={uploadedFile.filePath} </p> : null}
-  
-  {uploadedFile ? (
-        <div className="row mt-5">
-          <div className="col-md-6 m-auto">
-            <h3 className="text-center">{uploadedFile.fileName}</h3>
-            <img style={{ width: "100%" }} src={uploadedFile.filePath} alt="" />
-          </div>
-        </div>
-      ) : null}
-    </div>
-    <div className = "uploads-container">
-    <table>
-    <tr><td>{uploadData}</td></tr>
-    </table>
-    </div>
-    </div>
-
-  );
+    );
 }
 
 export default Upload;

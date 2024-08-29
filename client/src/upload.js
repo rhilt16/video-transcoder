@@ -15,7 +15,7 @@ function Upload() {
         const formData = new FormData();
         formData.append("file", file);
         try {
-            const res = await axios.post("http://localhost:8080/videos/uploads/upload", formData, {
+            const res = await axios.post("/videos/uploads/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -36,8 +36,15 @@ function Upload() {
     useEffect(() => {
         const getUploads = async () => {
             try {
-                const res = await axios.get("http://localhost:8080/videos/uploads");
-                setUploadData(res.data);
+                const res = await axios.get("http://ec2-54-252-162-220.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads", {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+                if(res.status === 200){
+            setUploadData(res.data)
+            console.log(res.data)
+        }   
                 setMessage("Upload Data Retrieved");
             } catch (err) {
                 if (err.response && err.response.status === 500) {
@@ -104,11 +111,15 @@ function Upload() {
                         <tr>
                             <th>Uploaded Files</th>
                         </tr>
+                        <tr>
+                        <td>Video ID</td><td>Time uploaded</td>
+                        </tr>
                     </thead>
                     <tbody>
                         {uploadData.map((data, index) => (
                             <tr key={index}>
-                                <td>{data.fileName}</td>
+                                <td>{data.video_id}</td>
+                                <td>{data.time_uploaded}</td>
                             </tr>
                         ))}
                     </tbody>

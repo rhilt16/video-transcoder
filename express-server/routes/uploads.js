@@ -13,22 +13,21 @@ const outputpath = "output.mov";
 
 ffmpeg.ffprobe(inputpath,(error,metadata) => {
   console.log(metadata)
-  const totalDuration = metadata.format.duration;
 
 });
 
-ffmpeg(inputpath)
-  .output(outputpath)
-  .videoCodec('libx264')
-  .audioCodec('libmp3lame')
-  .on('progress', (progress) => {
-    console.log(progress)
-  })
-  .on('end',() => {
-  console.log("done")
-  })
-  .on('error',(error) => console.log(error))
-  .save('../uploads/output.avi')
+//ffmpeg(inputpath)
+//  .output(outputpath)
+//  .videoCodec('libx264')
+//  .audioCodec('libmp3lame')
+//  .on('progress', (progress) => {
+//    console.log(progress)
+//  })
+//  .on('end',() => {
+//  console.log("done")
+//  })
+//  .on('error',(error) => console.log(error))
+//  .save('../uploads/output.avi')
 
 router.post("/uploads/upload", (req, res) => {
   // Check if file is not available return message with status 400.
@@ -40,7 +39,7 @@ router.post("/uploads/upload", (req, res) => {
   const UFileName = `${new Date().getTime()}-${file.name.replaceAll(" ", "-")}`;
   // This line of code will save our file in public/uploads folder in our
   //appliction and will retrun err if any error found if no error found then return pathname of file.
-  file.mv(`${__dirname}/../../uploads/${UFileName}`, (err) => {
+  file.mv(`${__dirname}/../uploads/${UFileName}`, (err) => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);
@@ -72,6 +71,32 @@ router.post("/metadata/:id/update", metadata_controller.metadata_update_post);
 router.get("/metadata/:id", metadata_controller.metadata_select);
 
 // Transcodes
+
+router.post("/transcodes/transcode", (req, res) => {
+  // Check if file is not available return message with status 400.
+  if (req.files === null) {
+    return res.status(400).json({ msg: "No file specified" });
+  }
+  const file = req.files.file;
+  // We need unique file name to save it in folder and then use filename to access it. I have replace space with - and concatinated file name with Date String. We can also used uuid package as well.
+  const UFileName = file.name;
+  const inputpath = req.filepath;
+  const outputname = UFileName + req.type;
+  const outputpath = `../../transcodes/${outputpath}`;
+
+ffmpeg(inputpath)
+  .output(outputpath)
+  .videoCodec('libx264')
+  .audioCodec('libmp3lame')
+  .on('progress', (progress) => {
+    console.log(progress)
+  })
+  .on('end',() => {
+  console.log("done")
+  })
+  .on('error',(error) => console.log(error))
+  .save('../uploads/output.avi')
+});
 
 router.get("/transcodes", transcodes_controller.transcode_list);
 

@@ -10,6 +10,7 @@ import {
   Route,
 } from "react-router-dom";
 import Upload from "./upload.js";
+import Login from "./login.js";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
             
             <Routes>
                 <Route exact path="/upload" element={<Upload />} />
-
+                <Route exact path="/login" element={<Login />} />
             </Routes>
         </Router>
         

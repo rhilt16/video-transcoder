@@ -15,7 +15,7 @@ function Upload() {
         const formData = new FormData();
         formData.append("file", file);
         try {
-            const res = await axios.post("/videos/uploads/upload", formData, {
+            const res = await axios.post("http://ec2-54-252-242-85.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -36,7 +36,7 @@ function Upload() {
     useEffect(() => {
         const getUploads = async () => {
             try {
-                const res = await axios.get("http://ec2-54-252-162-220.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads", {
+                const res = await axios.get("http://ec2-54-252-242-85.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads", {
                 headers: {
                     "Content-Type": "application/json",
                 },

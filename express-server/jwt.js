@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const tokenSecret = "replacewithactualtoken";
 
-const generateToken = (username) => {
-   let token = jwt.sign(username, tokenSecret, {expiresIn: "300m"});
+const generateToken = (email) => {
+   let token = jwt.sign(email, tokenSecret, {expiresIn: "300m"});
    return token;
 }
 
@@ -23,7 +23,7 @@ const authenticateToken = (req, res, next) => {
       const user = jwt.verify(token, tokenSecret);
 
       console.log(
-         `authToken verified for: ${user.username} at the URL: ${req.url}`
+         `authToken verified for: ${user.email}`
       );
 
       // Add user info to the request for the next handler
@@ -31,7 +31,7 @@ const authenticateToken = (req, res, next) => {
       next();
    } catch (err) {
       console.log(
-         `JWT verification failed at URL ${req.url}`,
+         `JWT verification failed`,
          err.name,
          err.message
       );
@@ -40,3 +40,4 @@ const authenticateToken = (req, res, next) => {
 
 
 }
+module.exports = {tokenSecret, generateToken, authenticateToken}

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const asyncHandler = require("express-async-handler");
 const user_controller = require("../controllers/userController")
+const JWT = require("../jwt.js");
 
 
 /* GET users listing. */
@@ -23,6 +24,6 @@ router.post("/:id/update", user_controller.user_update_post);
 router.get("/:id", user_controller.user_select);
 
 
-
+router.post("/login", user_controller.user_login_post);
 
 module.exports = router;

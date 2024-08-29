@@ -2,6 +2,8 @@ const User = require("../models/users");
 const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
+const JWT = require("../jwt.js");
+const path = require("path");
 
 exports.user_list = asyncHandler(async (req, res, next) => {
   const user = await User.find().exec();
@@ -164,3 +166,23 @@ exports.user_update_post = [
     }
   }),
 ];
+
+exports.user_login_post = asyncHandler(async (req, res, next) => {
+
+  const {email, password} = req.body;
+
+  const user = await User.findOne({
+    email: email,
+    password: password
+  }).exec();
+
+  if (user === null) {
+    const err = new Error("User not found");
+    err.status = 404;
+    return next(err);
+  }
+  console.log(JWT.tokenSecret);
+  const token = JWT.generateToken({email});
+  res.json({authenticationToken: token});
+
+});

@@ -5,18 +5,13 @@ const upload_controller = require("../controllers/uploadController");
 const metadata_controller = require("../controllers/metadataController");
 const transcodes_controller = require("../controllers/transcodeController")
 const ffmpeg = require('fluent-ffmpeg');
+const JWT = require("../jwt.js");
 
-const inputpath = "../uploads/1724748133958-video.mp4";
-const outputpath = "output.mov";
+
 
 //Use ffmpeg to get video duration
 
-ffmpeg.ffprobe(inputpath,(error,metadata) => {
-  console.log(metadata)
-
-});
-
-//ffmpeg(inputpath)
+//   ffmpeg(inputpath)
 //  .output(outputpath)
 //  .videoCodec('libx264')
 //  .audioCodec('libmp3lame')
@@ -29,7 +24,7 @@ ffmpeg.ffprobe(inputpath,(error,metadata) => {
 //  .on('error',(error) => console.log(error))
 //  .save('../uploads/output.avi')
 
-router.post("/uploads/upload", (req, res) => {
+router.post("/uploads/upload", JWT.authenticateToken, (req, res) => {
   // Check if file is not available return message with status 400.
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
@@ -39,7 +34,7 @@ router.post("/uploads/upload", (req, res) => {
   const UFileName = `${new Date().getTime()}-${file.name.replaceAll(" ", "-")}`;
   // This line of code will save our file in public/uploads folder in our
   //appliction and will retrun err if any error found if no error found then return pathname of file.
-  file.mv(`${__dirname}/../uploads/${UFileName}`, (err) => {
+  file.mv(`./uploads/${UFileName}`, (err) => {
     if (err) {
       console.error(err);
       return res.status(500).send(err);

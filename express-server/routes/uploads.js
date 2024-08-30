@@ -6,42 +6,65 @@ const metadata_controller = require("../controllers/metadataController");
 const transcodes_controller = require("../controllers/transcodeController")
 const ffmpeg = require('fluent-ffmpeg');
 const JWT = require("../jwt.js");
+const fs = require('fs');
+const multer = require('multer');
 
-
-
-//Use ffmpeg to get video duration
-
-//   ffmpeg(inputpath)
-//  .output(outputpath)
-//  .videoCodec('libx264')
-//  .audioCodec('libmp3lame')
-//  .on('progress', (progress) => {
-//    console.log(progress)
-//  })
-//  .on('end',() => {
-//  console.log("done")
-//  })
-//  .on('error',(error) => console.log(error))
-//  .save('../uploads/output.avi')
-
-router.post("/uploads/upload", JWT.authenticateToken, (req, res) => {
-  // Check if file is not available return message with status 400.
-  if (req.files === null) {
-    return res.status(400).json({ msg: "No file uploaded" });
-  }
-  const file = req.files.file;
-  // We need unique file name to save it in folder and then use filename to access it. I have replace space with - and concatinated file name with Date String. We can also used uuid package as well.
-  const UFileName = `${new Date().getTime()}-${file.name.replaceAll(" ", "-")}`;
-  // This line of code will save our file in public/uploads folder in our
-  //appliction and will retrun err if any error found if no error found then return pathname of file.
-  file.mv(`./uploads/${UFileName}`, (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send(err);
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + "-" + "-" + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
     }
-    res.json({ fileName: UFileName, filePath: `/uploads/${UFileName}` });
-  });
 });
+
+const fileFilter = (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase().substring(1); // Strip the leading '.'
+
+    const filenameRegex = /^[a-zA-Z0-9-]+$/; //Only allow a-z, 0-9, -, and _ in file name
+
+    // Validate file name
+    const filename = path.basename(file.originalname, path.extname(file.originalname));
+    if (!filenameRegex.test(filename)) {
+        return cb(new Error("Invalid file name. Only English letters, digits, hyphens, and underscores are allowed."), false);
+    }
+
+    if (fileTypes.includes(ext)) {
+        cb(null, true);
+    } else {
+        cb(new Error("Invalid file type."), false);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 1024 * 1024 * 50 } //50MB limit
+}).single('file');
+
+
+
+router.post("/uploads/upload", JWT.authenticateToken, asyncHandler(async (req, res, next) => {
+        //Use multer to upload the file
+        upload(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ error: true, message: err.message });
+            } else if (err) {
+                return res.status(400).json({ error: true, message: err.message });
+            }
+
+            if (!req.file) {
+                return res.status(400).json({ error: true, message: "No file uploaded." });
+            }
+
+return res.status(200).json({message: "good"});
+
+
+        })
+    }));
+
+
 
 router.get("/uploads", upload_controller.upload_list);
 
@@ -69,15 +92,9 @@ router.get("/metadata/:id", metadata_controller.metadata_select);
 
 router.post("/transcodes/transcode", (req, res) => {
   // Check if file is not available return message with status 400.
-  if (req.files === null) {
-    return res.status(400).json({ msg: "No file specified" });
-  }
-  const file = req.files.file;
   // We need unique file name to save it in folder and then use filename to access it. I have replace space with - and concatinated file name with Date String. We can also used uuid package as well.
-  const UFileName = file.name;
   const inputpath = req.filepath;
-  const outputname = UFileName + req.type;
-  const outputpath = `../../transcodes/${outputpath}`;
+  const outputpath = `/uploads/output.avi`;
 
 ffmpeg(inputpath)
   .output(outputpath)
@@ -90,7 +107,7 @@ ffmpeg(inputpath)
   console.log("done")
   })
   .on('error',(error) => console.log(error))
-  .save('../uploads/output.avi')
+  .save('./uploads/output.avi')
 });
 
 router.get("/transcodes", transcodes_controller.transcode_list);

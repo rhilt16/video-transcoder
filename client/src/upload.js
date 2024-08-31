@@ -9,15 +9,23 @@ function Upload() {
     const [message, setMessage] = useState("");
     const [uploadData, setUploadData] = useState([]);
 
-    // Create OnSubmit function
+    let authToken = '';
+
+    if(localStorage.getItem('authToken') !== undefined){
+       authToken = localStorage.getItem('authToken');
+    }  else {
+       console.log("not authenticated");
+    }
+
     const onSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("file", file);
         try {
-            const res = await axios.post("http://ec2-54-252-242-85.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads/upload", formData, {
+            const res = await axios.post("http://ec2-13-54-107-150.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${authToken}`,
                 },
             });
             const { fileName, filePath } = res.data;
@@ -35,16 +43,20 @@ function Upload() {
     // Fetch uploaded files
     useEffect(() => {
         const getUploads = async () => {
+
             try {
-                const res = await axios.get("http://ec2-54-252-242-85.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads", {
+            if(localStorage.getItem('user_id') !== undefined){
+                const user_id = localStorage.getItem('user_id');
+                const res = await axios.get(`http://ec2-13-54-107-150.ap-southeast-2.compute.amazonaws.com:8080/users/uploads/${user_id}`, {
                 headers: {
                     "Content-Type": "application/json",
                 },
-            });
+                });
                 if(res.status === 200){
             setUploadData(res.data)
             console.log(res.data)
-        }   
+            }
+        }
                 setMessage("Upload Data Retrieved");
             } catch (err) {
                 if (err.response && err.response.status === 500) {

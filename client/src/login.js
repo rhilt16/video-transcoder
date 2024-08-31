@@ -15,15 +15,16 @@ function Login() {
         formData.append('password', password);
         console.log(formData);
         try {
-            const res = await axios.post("http://ec2-54-252-242-85.ap-southeast-2.compute.amazonaws.com:8080/users/login", {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }, data: {
-                   "data": formData
-                }
-            });
-            const authToken = res.data;
-            setMessage("successfully authenticated");
+
+           const res = await axios.post("http://ec2-13-54-107-150.ap-southeast-2.compute.amazonaws.com:8080/users/login", formData);
+           const authToken = res.data.authenticationToken;
+           const user_id = res.data.user_id;
+           setMessage("successfully authenticated");
+	   if(localStorage.getItem('authToken')){
+              localStorage.removeItem('authToken');
+           }
+           localStorage.setItem('authToken', authToken);
+           localStorage.setItem('user_id', user_id);
         } catch (err) {
             if (err.response && err.response.status === 500) {
                 setMessage("There was a problem with the server");

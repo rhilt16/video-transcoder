@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 const JWT = require("../jwt.js");
 const path = require("path");
+const Upload = require("../models/uploadLogs");
+
+
+
 
 exports.user_list = asyncHandler(async (req, res, next) => {
   const user = await User.find().exec();
@@ -17,7 +21,7 @@ exports.user_select = asyncHandler(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid user ID" });
   }
-
+  const authUser = req.user.email;
   const user = await User.findById(req.params.id)
     .exec();
 
@@ -181,8 +185,28 @@ exports.user_login_post = asyncHandler(async (req, res, next) => {
     err.status = 404;
     return next(err);
   }
+  const user_id = user._id;
   console.log(JWT.tokenSecret);
-  const token = JWT.generateToken({email});
-  res.json({authenticationToken: token});
+  const token = JWT.generateToken({user_id});
+  res.json({authenticationToken: token, user_id: user_id});
+
+});
+
+exports.upload_list = asyncHandler(async (req, res, next) => {
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+
+  const uploads = await Upload.find({user_id: req.params.id})
+    .exec();
+
+  if (uploads === null) {
+    const err = new Error("Upload not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.json(uploads);
 
 });

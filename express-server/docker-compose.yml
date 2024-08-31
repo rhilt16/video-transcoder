@@ -1,0 +1,14 @@
+version: '2.20.2'
+
+services:
+  express-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:3000"
+    volumes:
+      - uploads:/app/express-server/uploads  # Mount the uploads directory
+    restart: unless-stopped # Automatically restart the container unless it is explicitly stopped
+volumes:
+  uploads:

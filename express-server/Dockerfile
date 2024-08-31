@@ -1,6 +1,6 @@
 FROM node:18-alpine
-WORKDIR /app
+WORKDIR /app/express-server
 COPY . .
 RUN npm i
-CMD ["node", "./bin/www"]
-EXPOSE 3000
+EXPOSE 8081
+CMD ["npm", "run", "start"]

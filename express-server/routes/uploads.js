@@ -14,32 +14,14 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + "-" + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+        console.log(file);
         cb(null, uniqueSuffix + '-' + file.originalname);
     }
 });
 
-const fileFilter = (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase().substring(1); // Strip the leading '.'
-
-    const filenameRegex = /^[a-zA-Z0-9-]+$/; //Only allow a-z, 0-9, -, and _ in file name
-
-    // Validate file name
-    const filename = path.basename(file.originalname, path.extname(file.originalname));
-    if (!filenameRegex.test(filename)) {
-        return cb(new Error("Invalid file name. Only English letters, digits, hyphens, and underscores are allowed."), false);
-    }
-
-    if (fileTypes.includes(ext)) {
-        cb(null, true);
-    } else {
-        cb(new Error("Invalid file type."), false);
-    }
-};
-
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
     limits: { fileSize: 1024 * 1024 * 50 } //50MB limit
 }).single('file');
 
@@ -47,11 +29,27 @@ const upload = multer({
 
 router.post("/uploads/upload", JWT.authenticateToken, asyncHandler(async (req, res, next) => {
         //Use multer to upload the file
+console.log('Current working directory:', process.cwd());
+
+await fs.readdir('.', (err, files) => {
+  if (err) {
+    console.error('Error reading directory:', err);
+    return;
+  }
+  console.log('Files in the current directory:', files);
+});
         upload(req, res, function (err) {
+            fs.readdir('.', (err, files) => {
+  		if (err) {
+  		  console.error('Error reading directory:', err);
+ 		   return;
+		  }
+			  console.log('Files in the current directory:', files);
+});
             if (err instanceof multer.MulterError) {
-                return res.status(400).json({ error: true, message: err.message });
+                return res.status(400).json({ error: true, message: err });
             } else if (err) {
-                return res.status(400).json({ error: true, message: err.message });
+                return res.status(400).json({ error: true, message: err });
             }
 
             if (!req.file) {

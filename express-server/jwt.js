@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const tokenSecret = "replacewithactualtoken";
 
 const generateToken = (email) => {
-   let token = jwt.sign(email, tokenSecret, {expiresIn: "300m"});
+   let token = jwt.sign(user_id, tokenSecret, {expiresIn: "300m"});
    return token;
 }
 
@@ -23,7 +23,7 @@ const authenticateToken = (req, res, next) => {
       const user = jwt.verify(token, tokenSecret);
 
       console.log(
-         `authToken verified for: ${user.email}`
+         `authToken verified for: ${user.user_id}`
       );
 
       // Add user info to the request for the next handler

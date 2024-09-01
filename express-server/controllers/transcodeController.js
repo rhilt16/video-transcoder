@@ -3,13 +3,14 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 
+// Lists all transcodes
 exports.transcode_list = asyncHandler(async (req, res, next) => {
   const transcode = await Transcode.find().exec();
   res.json(transcode);
   return;
   });
 
-
+// Select a transcode entry
 exports.transcode_select = asyncHandler(async (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -29,7 +30,7 @@ exports.transcode_select = asyncHandler(async (req, res, next) => {
 
 
 });
-
+// Create a transcode entry
 exports.transcode_create_post = [
   // Validate and sanitize fields.
   body("video_id")
@@ -78,7 +79,7 @@ exports.transcode_create_post = [
     }
   }),
 ];
-
+// Update a transcode entry
 exports.transcode_update_post = [
   // Validate and sanitize fields.
   body("video_id")
@@ -118,7 +119,7 @@ exports.transcode_update_post = [
       return res.status(404).json({ error: 'Transcode not found' });
     }
 
-    // Create Author object with escaped and trimmed data (and the old id!)
+    // Create Transcode object with escaped and trimmed data (and the old id!)
     const transcode = new Transcode({
       video_id: req.body.video_id,
       time_uploaded: req.body.time_uploaded,
@@ -143,7 +144,7 @@ exports.transcode_update_post = [
     }
   }),
 ];
-
+// Delete a transcode entry
 exports.transcode_delete_post = asyncHandler(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid transcode ID" });

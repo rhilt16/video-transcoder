@@ -3,13 +3,14 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 
+// Lists all metadata
 exports.metadata_list = asyncHandler(async (req, res, next) => {
   const metadata = await Metadata.find().exec();
   res.json(metadata);
   return;
   });
 
-
+// Select a specific video's metadata
 exports.metadata_select = asyncHandler(async (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -29,7 +30,7 @@ exports.metadata_select = asyncHandler(async (req, res, next) => {
 
 
 });
-
+// Create a metadata entry
 exports.metadata_create_post = [
   // Validate and sanitize fields.
   body("video_id")
@@ -78,7 +79,7 @@ exports.metadata_create_post = [
     }
   }),
 ];
-
+// Update a metadata entry
 exports.metadata_update_post = [
   // Validate and sanitize fields.
   body("video_id")
@@ -143,7 +144,7 @@ exports.metadata_update_post = [
     }
   }),
 ];
-
+// Delete a metadata entry
 exports.metadata_delete_post = asyncHandler(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid metadata ID" });

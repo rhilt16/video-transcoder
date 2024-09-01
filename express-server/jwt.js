@@ -1,27 +1,28 @@
 const jwt = require("jsonwebtoken");
 
-// Generate secret token
+// Secret token
+const tokenSecret = "93e71c721095b6601e45fa57d4576141e65f8d1c6989543c3f68f2e1c2e7751b";
 
-const tokenSecret = "replacewithactualtoken";
-
+// Generate a token using the provided payload, secret token, and set it to expire in 30 minutes 
 const generateToken = (payload) => {
-   let token = jwt.sign(payload, tokenSecret, {expiresIn: "300m"});
+   let token = jwt.sign(payload, tokenSecret, {expiresIn: "30m"});
    return token;
 }
 
+// Authenticate a provided JWT token
 const authenticateToken = (req, res, next) => {
-
+  // Retrieve the necessary parts from the request
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(' ')[1];
 
+  // If no token is present, respond with an error
   if(!token) {
     console.log("Web token missing");
     return res.sendStatus(401);
   }
-
+// Verify the JWT token and respond with a verified message if successful, otherwise send an error and Unauthorized message
   try {
       const user = jwt.verify(token, tokenSecret);
-
       console.log(
          `authToken verified for: ${user._id}`
       );

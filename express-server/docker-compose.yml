@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:3000"
+      - "8080:3000" # Listen on port 8080
     volumes:
-      - uploads:/app/uploads  # Mount the uploads directory
-    restart: unless-stopped # Automatically restart the container unless it is explicitly stopped
+      - uploads:/app/uploads  # Mount upload directory on /app/uploads 
+    restart: unless-stopped # Automatically restart the container unless stopped
 volumes:
-  uploads:
+  uploads: # Assign the uploads volume

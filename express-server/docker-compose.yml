@@ -1,4 +1,4 @@
-version: '2.20.2'
+version: '3.9'
 
 services:
   express-server:
@@ -8,7 +8,7 @@ services:
     ports:
       - "8080:3000"
     volumes:
-      - uploads:/app/express-server/uploads  # Mount the uploads directory
+      - uploads:/app/uploads  # Mount the uploads directory
     restart: unless-stopped # Automatically restart the container unless it is explicitly stopped
 volumes:
   uploads:

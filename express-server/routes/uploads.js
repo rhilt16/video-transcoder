@@ -9,58 +9,44 @@ const JWT = require("../jwt.js");
 const fs = require('fs');
 const multer = require('multer');
 
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/');
+        cb(null, 'uploads/'); // Ensure this directory exists and is writable
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-        console.log(file);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        console.log('File received:', file); // Check the file object
         cb(null, uniqueSuffix + '-' + file.originalname);
     }
 });
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 1024 * 1024 * 50 } //50MB limit
+    limits: { fileSize: 1024 * 1024 * 50 } // 50MB limit
 }).single('file');
 
+router.post('/uploads/upload', JWT.authenticateToken, asyncHandler(async (req, res, next) => {
+    upload(req, res, function (err) {
+        console.log('Received file:', req.file); // Debug log for req.file
 
-
-router.post("/uploads/upload", JWT.authenticateToken, asyncHandler(async (req, res, next) => {
-        //Use multer to upload the file
-console.log('Current working directory:', process.cwd());
-
-await fs.readdir('.', (err, files) => {
-  if (err) {
-    console.error('Error reading directory:', err);
-    return;
-  }
-  console.log('Files in the current directory:', files);
-});
-        upload(req, res, function (err) {
-            fs.readdir('.', (err, files) => {
-  		if (err) {
-  		  console.error('Error reading directory:', err);
- 		   return;
-		  }
-			  console.log('Files in the current directory:', files);
-});
-            if (err instanceof multer.MulterError) {
-                return res.status(400).json({ error: true, message: err });
-            } else if (err) {
-                return res.status(400).json({ error: true, message: err });
+        if (err instanceof multer.MulterError) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ error: true, message: 'File size exceeds limit' });
             }
+            return res.status(400).json({ error: true, message: err });
+        } else if (err) {
+            return res.status(400).json({ error: true, message: err });
+        }
 
-            if (!req.file) {
-                return res.status(400).json({ error: true, message: "No file uploaded." });
-            }
+        if (!req.file) {
+            return res.status(400).json({ error: true, message: 'No file uploaded' });
+        }
 
-return res.status(200).json({message: "good"});
-
-
-        })
-    }));
+        // Continue processing the file
+        res.status(200).json({ success: true, message: 'File uploaded successfully', file: req.file });
+    });
+}));
 
 
 
@@ -72,7 +58,6 @@ router.post("/uploads/:id/delete", upload_controller.upload_delete_post);
 
 router.post("/uploads/:id/update", upload_controller.upload_update_post);
 
-router.get("/uploads/:id", upload_controller.upload_select);
 
 // Video Metadata
 

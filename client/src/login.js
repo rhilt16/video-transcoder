@@ -8,28 +8,32 @@ function Login() {
     // Create OnSubmit function
     const onSubmit = async (e) => {
         e.preventDefault();
-        const email = document.getElementById("emailInput");
-        const password = document.getElementById("passwordInput");
+        const email = document.getElementById("emailInput").value;
+        const password = document.getElementById("passwordInput").value;
         const formData = new FormData();
         formData.append('email', email);
         formData.append('password', password);
         console.log(formData);
         try {
 
-           const res = await axios.post("http://ec2-13-54-107-150.ap-southeast-2.compute.amazonaws.com:8080/users/login", formData);
+           const res = await axios.post("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/users/login", formData);
            const authToken = res.data.authenticationToken;
-           const user_id = res.data.user_id;
+           const user_id = res.data.payload.user_id;
+           const role = res.data.payload.role;
            setMessage("successfully authenticated");
 	   if(localStorage.getItem('authToken')){
               localStorage.removeItem('authToken');
+              localStorage.removeItem('user_id');
+            
            }
            localStorage.setItem('authToken', authToken);
            localStorage.setItem('user_id', user_id);
+           localStorage.setItem('role', role);
         } catch (err) {
             if (err.response && err.response.status === 500) {
                 setMessage("There was a problem with the server");
             } else {
-                setMessage(err.response?.data?.msg || "Error uploading file");
+                setMessage(err.response?.data?.msg || "Error logging in");
             }
         }
     };
@@ -46,7 +50,6 @@ function Login() {
                  <input type="submit" value="Login" />
               </form>
 
-           
            <p>{message}</p>
            </div>
 

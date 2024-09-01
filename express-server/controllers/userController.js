@@ -181,14 +181,17 @@ exports.user_login_post = asyncHandler(async (req, res, next) => {
   }).exec();
 
   if (user === null) {
-    const err = new Error("User not found");
-    err.status = 404;
-    return next(err);
+    return res.status(404).json({error: "User not found"});
   }
   const user_id = user._id;
+  let role = "user";
+  if(email.includes("admin.com")){
+	role = "admin";
+  }
+  const payload = {"user_id": user_id, "role": role}
   console.log(JWT.tokenSecret);
-  const token = JWT.generateToken({user_id});
-  res.json({authenticationToken: token, user_id: user_id});
+  const token = JWT.generateToken({payload});
+  res.json({authenticationToken: token, payload: payload});
 
 });
 

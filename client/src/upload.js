@@ -4,33 +4,38 @@ import { useState, useEffect } from 'react';
 
 function Upload() {
     const [file, setFile] = useState("");
-    const [filename, setFilename] = useState("Choose File");
     const [uploadedFile, setUploadedFile] = useState({});
     const [message, setMessage] = useState("");
     const [uploadData, setUploadData] = useState([]);
 
     let authToken = '';
-
+    let isAdmin = '';
     if(localStorage.getItem('authToken') !== undefined){
        authToken = localStorage.getItem('authToken');
     }  else {
        console.log("not authenticated");
     }
+    if(localStorage.getItem('role') === 'admin'){
+	isAdmin = true;
+    } else {
+	isAdmin = false;
+    }
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("file", file);
+        const formDataFile = new FormData();
+        formDataFile.append("file", file);
         try {
-            const res = await axios.post("http://ec2-13-54-107-150.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads/upload", formData, {
+            const res = await axios.post("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads/upload", formDataFile, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": `Bearer ${authToken}`,
                 },
             });
-            const { fileName, filePath } = res.data;
+            const fileName = res.data.fileName;
+            const filePath = res.data.filePath;
             setUploadedFile({ fileName, filePath });
-            setMessage("File Uploaded");
+            setMessage("File successfully uploaded");
         } catch (err) {
             if (err.response && err.response.status === 500) {
                 setMessage("There was a problem with the server");
@@ -44,21 +49,36 @@ function Upload() {
     useEffect(() => {
         const getUploads = async () => {
 
-            try {
-            if(localStorage.getItem('user_id') !== undefined){
+        try {
+           if(localStorage.getItem('role') === 'user' && localStorage.getItem('user_id') !== undefined){
                 const user_id = localStorage.getItem('user_id');
-                const res = await axios.get(`http://ec2-13-54-107-150.ap-southeast-2.compute.amazonaws.com:8080/users/uploads/${user_id}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                const res = await axios.get(`http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/users/uploads/${user_id}`, {
+                	headers: {
+                    		"Content-Type": "application/json",
+                    		"Authorization": `Bearer ${authToken}`,
+                	},
                 });
+
                 if(res.status === 200){
-            setUploadData(res.data)
-            console.log(res.data)
-            }
-        }
-                setMessage("Upload Data Retrieved");
-            } catch (err) {
+            		setUploadData(res.data)
+            	}
+            } else {
+
+		const res = await axios.get("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads", {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+                if(res.status === 200){
+			setUploadData(res.data);
+                }
+
+	    }
+
+            	setMessage("Upload Data Retrieved");
+
+	    } catch (err) {
                 if (err.response && err.response.status === 500) {
                     setMessage("There was a problem with the server");
                 } else {
@@ -69,10 +89,10 @@ function Upload() {
         getUploads();
     }, []);
 
-    // Handle file input change
+    // File input change
     const onChange = (e) => {
         setFile(e.target.files[0]);
-        setFilename(e.target.files[0].name);
+        let filename = file.name;
     };
 
     return (
@@ -82,46 +102,31 @@ function Upload() {
                 <h2>Upload a video file</h2>
                 <h5>Supported formats: ?</h5>
                 <form onSubmit={onSubmit}>
-                    <div className="custom-file mb-4">
+                    <div className="upload-file">
                         <input
                             type="file"
-                            className="custom-file-input"
+                            className="file-input"
                             id="customFile"
-                            accept="video/*"
+                            accept="video"
                             onChange={onChange}
                             required
                         />
-                        <label className="custom-file-label" htmlFor="customFile">
-                            {filename}
+                        <label className="custom-file-label">
+                            {file.name}
                         </label>
                     </div>
 
-                    <input
-                        type="submit"
-                        value="Upload"
-                        className="btn btn-primary btn-block mt-4"
-                    />
+                    <input type="submit" value="Upload" className="submitBtn" />
                 </form>
 
                 {message && <p>{message}</p>}
-                {uploadedFile.fileName && (
-                    <div className="row mt-5">
-                        <div className="col-md-6 m-auto">
-                            <h3 className="text-center">{uploadedFile.fileName}</h3>
-                            <video style={{ width: "100%" }} controls>
-                                <source src={uploadedFile.filePath} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    </div>
-                )}
             </div>
 
             <div className="uploads-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Uploaded Files</th>
+                            <th>{isAdmin ? "All uploads by users" : "Your uploaded files"}</th>
                         </tr>
                         <tr>
                         <td>Video ID</td><td>Time uploaded</td>

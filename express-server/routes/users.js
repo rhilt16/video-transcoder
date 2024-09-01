@@ -14,14 +14,14 @@ router.post("/create", JWT.authenticateToken, user_controller.user_create_post);
 
 
 // POST request to delete Author.
-router.post("select/:id/delete", JWT.authenticateToken, user_controller.user_delete_post);
+router.post("/delete/:id", JWT.authenticateToken, user_controller.user_delete_post);
 
 
 // POST request to update Author.
-router.post("select/:id/update", JWT.authenticateToken, user_controller.user_update_post);
+router.post("/update/:id/", JWT.authenticateToken, user_controller.user_update_post);
 
 // GET request for one Author.
-router.get("select/:id", JWT.authenticateToken, user_controller.user_select);
+router.get("/select/:id", JWT.authenticateToken, user_controller.user_select);
 
 router.get("/uploads/:id", JWT.authenticateToken, user_controller.upload_list);
 

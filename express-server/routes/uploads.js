@@ -9,6 +9,7 @@ const JWT = require("../jwt.js");
 const fs = require('fs');
 
 
+// The route for uploading files, unfortunately didn't get it working in time
 
 router.post('/uploads/upload', JWT.authenticateToken, asyncHandler(async (req, res, next) => {
     upload(req, res, function (err) {
@@ -17,6 +18,7 @@ router.post('/uploads/upload', JWT.authenticateToken, asyncHandler(async (req, r
 
         // Replace with upload code, use fs most likely
 
+        // Handle errors
         if (!req.file) {
             return res.status(400).json({ error: true, message: 'No file uploaded' });
         } else if (err) {
@@ -29,7 +31,7 @@ router.post('/uploads/upload', JWT.authenticateToken, asyncHandler(async (req, r
 }));
 
 
-
+// Routes all use JWT authentication, and are handled in the upload controller
 router.get("/uploads", JWT.authenticateToken, upload_controller.upload_list);
 
 router.post("/uploads/create", JWT.authenticateToken, upload_controller.upload_create_post);
@@ -41,6 +43,7 @@ router.post("/uploads/update/:id", JWT.authenticateToken, upload_controller.uplo
 
 // Video Metadata
 
+// Routes all use JWT authentication, and are handled in the metadata controller
 router.get("/metadata", JWT.authenticateToken, metadata_controller.metadata_list);
 
 router.post("/metadata/create", JWT.authenticateToken, metadata_controller.metadata_create_post);
@@ -52,12 +55,15 @@ router.post("/metadata/update/:id", JWT.authenticateToken, metadata_controller.m
 router.get("/metadata/select/:id", JWT.authenticateToken, metadata_controller.metadata_select);
 
 // Transcodes
+// Routes all use JWT authentication, and are handled in the transcode controller
 
+// Route for transcoding a provided video file into a different video format
 router.post("/transcodes/transcode", (req, res) => {
   // Path for file to be converted, and the path of the outputted, converted video
   const inputpath = req.filepath;
   const outputpath = `/uploads/output.avi`;
 
+// Use ffmpeg to transcode, handle errors, and save the file in a provided path
 ffmpeg(inputpath)
   .output(outputpath)
   .videoCodec('libx264')

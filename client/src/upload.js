@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Upload() {
+    // Set all useState variables for the different functions
     const navigate = useNavigate();
     const [file, setFile] = useState("");
     const [uploadedFile, setUploadedFile] = useState({});
@@ -11,6 +12,7 @@ function Upload() {
     const [uploadData, setUploadData] = useState([]);
     const [userData, setUserData] = useState([]);
 
+    // Get variables from local storage to determine what content to show the user
     let authToken = '';
     let isAdmin = '';
     if(localStorage.getItem('authToken') !== undefined){
@@ -23,23 +25,28 @@ function Upload() {
     } else {
 	    isAdmin = false;
     }
-
+    // Handles the video upload
     const onSubmit = async (e) => {
         e.preventDefault();
+
+	// Set the form data, the video to convert in this case
         const formDataFile = new FormData();
         formDataFile.append("file", file);
         try {
+	    // Send upload request with the video in the form and the authorization token recieved from login page 
             const res = await axios.post("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads/upload", formDataFile, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     "Authorization": `Bearer ${authToken}`,
                 },
             });
+	    // If successful, displays the uploaded video and confirmation message 
             const fileName = res.data.fileName;
             const filePath = res.data.filePath;
             setUploadedFile({ fileName, filePath });
             setMessage("File successfully uploaded");
         } catch (err) {
+	    // Handle errors
             if (err.response && err.response.status === 500) {
                 setMessage("There was a problem with the server");
             } else {
@@ -48,11 +55,12 @@ function Upload() {
         }
     };
 
-    // Fetch uploaded files
+    // Get uploaded files
     useEffect(() => {
         const getUploads = async () => {
 
         try {
+	   // If the role of the user is 'user', then send an authorized request for the uploads associated with that user
            if(localStorage.getItem('role') === 'user' && localStorage.getItem('user_id') !== undefined){
                 const user_id = localStorage.getItem('user_id');
                 const res = await axios.get(`http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/users/uploads/${user_id}`, {
@@ -61,27 +69,28 @@ function Upload() {
                     		"Authorization": `Bearer ${authToken}`,
                 	},
                 });
-
+		// If successful, store in uploadData to display to the user
                 if(res.status === 200){
             		setUploadData(res.data)
             	}
             } else {
-
+		// Otherwise, the role is admin, so all upload data is retrieved instead
 		const res = await axios.get("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/videos/uploads", {
 			headers: {
 				"Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`,
+                		"Authorization": `Bearer ${authToken}`,
 			},
 		});
 
                 if(res.status === 200){
-			        setUploadData(res.data);
+			setUploadData(res.data);
                 }
 
 	    }
             	setMessage("Upload Data Retrieved");
 
 	    } catch (err) {
+		// Handle errors
                 if (err.response && err.response.status === 500) {
                     setMessage("There was a problem with the server");
                 } else {
@@ -96,6 +105,7 @@ function Upload() {
 useEffect(() => {
         const getUser = async () => {
         try {
+	   // If the role of the user is 'user', then send an authorized request for that user's profile data
            if(localStorage.getItem('role') === 'user' && localStorage.getItem('user_id') !== undefined){
                 const user_id = localStorage.getItem('user_id');
                 const res = await axios.get(`http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/users/select/${user_id}`, {
@@ -109,7 +119,7 @@ useEffect(() => {
             		setUserData(res.data)
             	}
             } else {
-
+		// Otherwise, since the user is an admin, display a brief overview of all user's data
 		const res = await axios.get("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/users", {
 			headers: {
 				"Content-Type": "application/json",
@@ -125,6 +135,7 @@ useEffect(() => {
             	setMessage("User Data Retrieved");
 
 	    } catch (err) {
+		// Handle errors
                 if (err.response && err.response.status === 500) {
                     setMessage("There was a problem with the server");
                 } else {
@@ -141,11 +152,15 @@ useEffect(() => {
     };
 
     return (
+	{/* Main app page */}
         <div className="App">
         <button onClick={() => navigate('/login')} className='signOutBtn'>Sign out</button>
 	    <h1>Video Transcoder</h1>
+	    {/* If userData is set, then display a logged in message, otherwise display "Not logged in" */}
 	    <h2>{userData ? `Logged in as: ${userData.firstName}` : "Not logged in"} </h2>
-            <div className='upload-container'>
+            
+	    {/* Container for the upload form */}
+	    <div className='upload-container'>
                 <h2>Upload a video file</h2>
                 <h5>Supported formats: MP4, AVI, MOV, WebM, etc.</h5>
                 <form onSubmit={onSubmit}>
@@ -173,10 +188,14 @@ useEffect(() => {
 
                 {message && <p>{message}</p>}
             </div>
-		<br></br>
+	<br></br>
+
+	{/* Display User data*/}
         <h2>User Info</h2>
-        {uploadData && uploadData.length > 0 ? (
+	{/* If the userData is set, then display user info table*/}
+        {userData && userData.length > 0 ? (
         <div className = 'user-container'>
+		{/* If the user is an admin, then display all user data*/}
 		{isAdmin ? (
                 <table>
                     <thead> 
@@ -198,6 +217,7 @@ useEffect(() => {
                     </tbody>
                 </table>
             ) : (
+		{/* Otherwise only display the individual user's data*/}
                 
                 <table>
              <tr>
@@ -220,6 +240,7 @@ useEffect(() => {
                 <h3>Sign in to display user info</h3>
             </div>
         )}
+		 {/* Same as before but for uploads*/}
         {uploadData && uploadData.length > 0 ? (
             <div className="uploads-container">
 		<h2>Uploaded Files</h2>

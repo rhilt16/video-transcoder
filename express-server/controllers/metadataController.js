@@ -119,7 +119,7 @@ exports.metadata_update_post = [
       return res.status(404).json({ error: 'Metadata not found' });
     }
 
-    // Create Author object with escaped and trimmed data (and the old id!)
+    // Create Metadata object with escaped and trimmed data (and the old id!)
     const metadata = new Metadata({
       video_id: req.body.video_id,
       path: req.body.path,

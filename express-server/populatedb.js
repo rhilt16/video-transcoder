@@ -12,6 +12,7 @@ const uploadLogs = [];
 const transcodeLogs = [];
 const metadata = [];
 
+// Uses the mongoose module for database services
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
@@ -19,6 +20,7 @@ const mongoDB = userArgs[0];
 
 main().catch((err) => console.log(err));
 
+// Create collections and initial entries and update online mongo database
 async function main() {
   console.log("Debug: About to connect");
   await mongoose.connect(mongoDB);

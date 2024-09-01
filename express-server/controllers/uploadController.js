@@ -3,13 +3,14 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 
+// List all uploads
 exports.upload_list = asyncHandler(async (req, res, next) => {
   const upload = await Upload.find().exec();
   res.json(upload);
   return;
   });
 
-
+// Select a specific upload
 exports.upload_select = asyncHandler(async (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -29,7 +30,7 @@ exports.upload_select = asyncHandler(async (req, res, next) => {
 
 
 });
-
+// Create an upload 
 exports.upload_create_post = [
   // Validate and sanitize fields.
   body("user_id")
@@ -77,7 +78,7 @@ exports.upload_create_post = [
     }
   }),
 ];
-
+// Update an upload entry
 exports.upload_update_post = [
   // Validate and sanitize fields.
   body("user_id")
@@ -114,7 +115,7 @@ exports.upload_update_post = [
       return res.status(404).json({ error: 'Upload not found' });
     }
 
-    // Create Author object with escaped and trimmed data (and the old id!)
+    // Create upload object with escaped and trimmed data (and the old id!)
     const upload = new Upload({
       user_id: req.body.user_id,
       video_id: req.body.video_id,
@@ -139,7 +140,7 @@ exports.upload_update_post = [
     }
   }),
 ];
-
+// Delete an upload entry
 exports.upload_delete_post = asyncHandler(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid upload ID" });

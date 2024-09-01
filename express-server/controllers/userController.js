@@ -6,16 +6,14 @@ const JWT = require("../jwt.js");
 const path = require("path");
 const Upload = require("../models/uploadLogs");
 
-
-
-
+// Lists all users
 exports.user_list = asyncHandler(async (req, res, next) => {
   const user = await User.find().exec();
   res.json(user);
   return;
   });
 
-
+// Select a specific user by ID
 exports.user_select = asyncHandler(async (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -35,8 +33,7 @@ exports.user_select = asyncHandler(async (req, res, next) => {
 
 
 });
-
-// Handle Author create on POST.
+// Create a new user
 exports.user_create_post = [
   // Validate and sanitize fields.
   body("firstName")
@@ -64,7 +61,7 @@ exports.user_create_post = [
     // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create Author object with escaped and trimmed data
+    // Create User object with escaped and trimmed data
     const user = new User({
       firstName: req.body.firstName,
       familyName: req.body.familyName,
@@ -87,7 +84,7 @@ exports.user_create_post = [
   }),
 ];
 
-//Handle Author delete on POST.
+// Delete a User using POST
 exports.user_delete_post = asyncHandler(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(400).json({ error: "Invalid user ID" });
@@ -106,7 +103,7 @@ exports.user_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 
-
+// Update a User with POST
 exports.user_update_post = [
   // Validate and sanitize fields.
   body("firstName")
@@ -170,31 +167,32 @@ exports.user_update_post = [
     }
   }),
 ];
-
+// Handles login requests
 exports.user_login_post = asyncHandler(async (req, res, next) => {
-
+  
   const {email, password} = req.body;
-
+  // Searches the users collection in the database with the inputted form data for a match 
   const user = await User.findOne({
     email: email,
     password: password
   }).exec();
-
+// If no user is found, then the email or password is incorrect
   if (user === null) {
-    return res.status(404).json({error: "User not found"});
+    return res.status(404).json({error: "Email or Password is incorrect"});
   }
+  // Sets user ID and role to be returned in the response JSON as part of the payload
   const user_id = user._id;
   let role = "user";
   if(email.includes("admin.com")){
 	role = "admin";
   }
   const payload = {"user_id": user_id, "role": role}
-  console.log(JWT.tokenSecret);
+  // Generates a JWT token from the payload, and returns it and the payload in the response 
   const token = JWT.generateToken({payload});
   res.json({authenticationToken: token, payload: payload});
 
 });
-
+// Lists all uploads
 exports.upload_list = asyncHandler(async (req, res, next) => {
 
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

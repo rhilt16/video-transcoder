@@ -152,14 +152,14 @@ useEffect(() => {
     };
 
     return (
-	{/* Main app page */}
+
         <div className="App">
         <button onClick={() => navigate('/login')} className='signOutBtn'>Sign out</button>
 	    <h1>Video Transcoder</h1>
-	    {/* If userData is set, then display a logged in message, otherwise display "Not logged in" */}
+	    
 	    <h2>{userData ? `Logged in as: ${userData.firstName}` : "Not logged in"} </h2>
-            
-	    {/* Container for the upload form */}
+
+	    
 	    <div className='upload-container'>
                 <h2>Upload a video file</h2>
                 <h5>Supported formats: MP4, AVI, MOV, WebM, etc.</h5>
@@ -190,12 +190,12 @@ useEffect(() => {
             </div>
 	<br></br>
 
-	{/* Display User data*/}
+	
         <h2>User Info</h2>
-	{/* If the userData is set, then display user info table*/}
-        {userData && userData.length > 0 ? (
+	
+        {uploadData && uploadData.length > 0 ? (
         <div className = 'user-container'>
-		{/* If the user is an admin, then display all user data*/}
+		
 		{isAdmin ? (
                 <table>
                     <thead> 
@@ -217,7 +217,7 @@ useEffect(() => {
                     </tbody>
                 </table>
             ) : (
-		{/* Otherwise only display the individual user's data*/}
+		
                 
                 <table>
              <tr>
@@ -240,7 +240,7 @@ useEffect(() => {
                 <h3>Sign in to display user info</h3>
             </div>
         )}
-		 {/* Same as before but for uploads*/}
+		
         {uploadData && uploadData.length > 0 ? (
             <div className="uploads-container">
 		<h2>Uploaded Files</h2>

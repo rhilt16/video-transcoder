@@ -23,7 +23,7 @@ function Login() {
         const formData = new FormData();
         formData.append('email', email);
         formData.append('password', password);
-        
+
         try {
 	   // Send login request, and store the response in the necessary parts
            const res = await axios.post("http://ec2-52-65-40-9.ap-southeast-2.compute.amazonaws.com:8080/users/login", formData);
@@ -32,10 +32,11 @@ function Login() {
            const role = res.data.payload.role;
 	   // Set the success message, and store the response parts in local storage for later use
            setMessage("successfully authenticated");
+	   
 	   if(localStorage.getItem('authToken')){
               localStorage.removeItem('authToken');
               localStorage.removeItem('user_id');
-            
+
            }
            localStorage.setItem('authToken', authToken);
            localStorage.setItem('user_id', user_id);

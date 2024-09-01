@@ -1,5 +1,13 @@
 .App {
   text-align: center;
+  align-content: center;
+  background-color: #282c34;
+  color: lightgoldenrodyellow;
+  min-height: 100%;
+}
+
+body{
+  background-color: #282c34;
 }
 
 .App-logo {
@@ -35,4 +43,125 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.user-container {
+  max-width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.user-container thead {
+  color: black;
+  background-color:darkgray;
+}
+
+.user-container table {
+  background-color: #282c34;
+  table-layout: fixed;
+  width: 700px;
+  border-color:darkslategray;
+  border-style:solid;
+  border-width: 1px;
+}
+
+.user-container tbody {
+  background-color: lightslategray;
+}
+.user-container td {
+  background-color: lightslategray;
+}
+
+.uploads-container {
+  max-width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.uploads-container thead {
+  color: black;
+  background-color:darkgray;
+}
+
+.uploads-container table {
+  background-color: #282c34;
+  table-layout: fixed;
+  width: 700px;
+  border-color:darkslategray;
+  border-style:solid;
+  border-width: 1px;
+}
+
+.uploads-container tbody {
+  background-color: lightslategray;
+}
+
+.upload-container {
+  background-color:darkgrey;
+  width:fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  color: black;
+
+}
+
+.upload-file {
+  background-color: lightgray;
+  width:fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  border-color:darkslategrey;
+  border-style:solid;
+  border-width: 1px;
+}
+
+.file-input {
+  margin-left: auto;
+  
+}
+
+input[type="file"] {
+  color: lightgray;
+}
+
+input::file-selector-button {
+  background-color: lightskyblue;
+  font-weight: bold;
+  width: 100%;
+}
+
+.submitBtn {
+  background-color: lightskyblue;
+  font-weight: bold;
+}
+
+.signOutBtn {
+  background-color: lightcoral;
+  font-weight: bold;
+  width: 8%;
+  padding: 10px;
+  margin-left: 1200px;
+  margin-top: 10px;
+}
+
+
+.login-container {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  background-color: rgb(109, 111, 133);
+  width:fit-content;
+  padding-top: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 100px;
+}
+
+.login-container input {
+  padding: 5px;
+  margin-top: 10px;
 }

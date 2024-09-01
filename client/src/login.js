@@ -1,9 +1,16 @@
 import './App.css';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [message, setMessage] = useState("Login");
+    const navigate = useNavigate();
+    if(localStorage.getItem('authToken')){
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user_id');
+    }
 
     // Create OnSubmit function
     const onSubmit = async (e) => {
@@ -21,6 +28,7 @@ function Login() {
            const user_id = res.data.payload.user_id;
            const role = res.data.payload.role;
            setMessage("successfully authenticated");
+           navigate('/upload');
 	   if(localStorage.getItem('authToken')){
               localStorage.removeItem('authToken');
               localStorage.removeItem('user_id');
@@ -42,15 +50,16 @@ function Login() {
         <div className="App">
 
            <div className="login-container">
-              <h1>Login</h1>
+              <h1>Account Login </h1>
 
               <form onSubmit={onSubmit}>
                  <input type="text" className="text-input" id="emailInput" placeholder="email" />
+                 <br></br>
                  <input type="text" className="text-input" id="passwordInput" placeholder="Password" />
+                 <br></br>
                  <input type="submit" value="Login" />
               </form>
 
-           <p>{message}</p>
            </div>
 
         </div>

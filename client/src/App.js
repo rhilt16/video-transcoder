@@ -12,6 +12,7 @@ import {
 import Upload from "./upload.js";
 import Login from "./login.js";
 
+// Web client displayed using React and react-router-dom
 function App() {
   return (
     <div className="App">
